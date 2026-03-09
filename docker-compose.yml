@@ -1,0 +1,54 @@
+services:
+  db:
+    image: pgvector/pgvector:pg16
+    container_name: smartops_db
+    environment:
+      POSTGRES_USER: smartops
+      POSTGRES_PASSWORD: smartops_password
+      POSTGRES_DB: smartops_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: always
+
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: smartops_pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@smartops.local
+      PGADMIN_DEFAULT_PASSWORD: admin
+    ports:
+      - "5050:80"
+    depends_on:
+      - db
+    restart: always
+
+  backend:
+    build: ./backend
+    container_name: smartops_backend
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend:/app
+    environment:
+      - DATABASE_URL=postgresql://smartops:smartops_password@db:5432/smartops_db
+    depends_on:
+      - db
+    restart: always
+
+  frontend:
+    build: ./frontend
+    container_name: smartops_frontend
+    ports:
+      - "8501:8501"
+    volumes:
+      - ./frontend:/app
+    environment:
+      - BACKEND_URL=http://backend:8000
+    depends_on:
+      - backend
+    restart: always
+
+volumes:
+  postgres_data:

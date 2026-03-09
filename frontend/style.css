@@ -1,0 +1,82 @@
+/* SmartOps Life ERP Theme */
+:root {
+    --bg-color: #0D0D0D;
+    --cyan: #00F2FF;
+    --magenta: #FF007A;
+    --glass-bg: rgba(255, 255, 255, 0.05);
+    --glass-border: rgba(255, 255, 255, 0.1);
+}
+
+/* Base Body */
+.stApp {
+    background-color: var(--bg-color);
+    color: white;
+    font-family: 'JetBrains Mono', 'Inter', monospace, sans-serif;
+}
+
+/* Glassmorphism Containers */
+div[data-testid="stMetric"],
+div.stCard,
+div[data-testid="stForm"] {
+    background: var(--glass-bg);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-radius: 12px;
+    border: 1px solid var(--glass-border);
+    padding: 20px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+/* Neon Borders for specific elements */
+.neon-cyan {
+    border: 1px solid var(--cyan) !important;
+    box-shadow: 0 0 10px var(--cyan), 0 0 20px var(--cyan) inset !important;
+}
+
+.neon-magenta {
+    border: 1px solid var(--magenta) !important;
+    box-shadow: 0 0 10px var(--magenta), 0 0 20px var(--magenta) inset !important;
+}
+
+/* Headers */
+h1,
+h2,
+h3 {
+    color: var(--cyan);
+    text-shadow: 0 0 5px var(--cyan);
+}
+
+/* Buttons */
+.stButton>button {
+    background: transparent;
+    border: 2px solid var(--magenta);
+    color: white;
+    border-radius: 8px;
+    padding: 10px 24px;
+    font-weight: bold;
+    transition: all 0.3s ease;
+    text-shadow: 0 0 5px var(--magenta);
+    box-shadow: 0 0 10px var(--magenta) inset, 0 0 10px var(--magenta);
+}
+
+.stButton>button:hover {
+    background: var(--magenta);
+    color: white;
+    box-shadow: 0 0 20px var(--magenta);
+}
+
+/* Progress Bars */
+.stProgress>div>div>div>div {
+    background-color: var(--magenta) !important;
+}
+
+/* Metric labels */
+div[data-testid="stMetricLabel"] {
+    color: #aaaaaa;
+}
+
+div[data-testid="stMetricValue"] {
+    color: var(--cyan);
+    text-shadow: 0 0 5px var(--cyan);
+}
