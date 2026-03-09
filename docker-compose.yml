@@ -7,7 +7,7 @@ services:
       POSTGRES_PASSWORD: smartops_password
       POSTGRES_DB: smartops_db
     ports:
-      - "5432:5432"
+      - "5435:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     restart: always
@@ -19,7 +19,7 @@ services:
       PGADMIN_DEFAULT_EMAIL: admin@smartops.local
       PGADMIN_DEFAULT_PASSWORD: admin
     ports:
-      - "5050:80"
+      - "5055:80"
     depends_on:
       - db
     restart: always
@@ -28,7 +28,7 @@ services:
     build: ./backend
     container_name: smartops_backend
     ports:
-      - "8000:8000"
+      - "8005:8000"
     volumes:
       - ./backend:/app
     environment:
@@ -41,7 +41,7 @@ services:
     build: ./frontend
     container_name: smartops_frontend
     ports:
-      - "8501:8501"
+      - "8505:8501"
     volumes:
       - ./frontend:/app
     environment:
