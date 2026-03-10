@@ -10,6 +10,10 @@ class TransactionType(str, enum.Enum):
     apartado = "Apartado"
     defense = "Defense" # For paying debts
 
+class State(str, enum.Enum):
+    guerra = "MODO_GUERRA"
+    expansion = "MODO_EXPANSION"
+
 class UsersConfig(Base):
     __tablename__ = "users_config"
     id = Column(Integer, primary_key=True, index=True)
@@ -17,6 +21,9 @@ class UsersConfig(Base):
     next_week_buff_pct = Column(Float, default=0.30)
     daily_multiplier = Column(Float, default=1.0)
     current_weekly_pool = Column(Float, default=500.0)
+    current_state = Column(Enum(State), default=State.guerra)
+    luxury_vault_pool = Column(Float, default=0.0)
+    investment_vault_pool = Column(Float, default=0.0)
 
 class Bucket(Base):
     __tablename__ = "buckets"

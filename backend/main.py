@@ -23,7 +23,10 @@ def read_root():
 
 @app.post("/transactions", response_model=schemas.TransactionResponse)
 def create_transaction(tx: schemas.TransactionCreate, db: Session = Depends(get_db)):
-    return crud.create_transaction(db=db, tx=tx)
+    try:
+        return crud.create_transaction(db=db, tx=tx)
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
 
 @app.get("/transactions", response_model=list[schemas.TransactionResponse])
 def get_transactions(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
