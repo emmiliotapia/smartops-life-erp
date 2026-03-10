@@ -1,17 +1,12 @@
-/* SmartOps Terminal UI Theme */
+/* SmartOps Terminal VIVID UI Theme */
 @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap');
 
 :root {
     --bg-color: #000000;
-    /* Negro Absoluto */
     --green-accent: #00FF41;
-    /* Verde Matrix */
+    --magenta-cyber: #FF007A;
     --text-muted: #444444;
-    /* Gris Ceniza */
-    --text-muted-alt: #003300;
-    /* Verde tenue */
     --glass-border: rgba(0, 255, 65, 0.2);
-    /* 1px sólido #00FF41 opacidad 20% */
 }
 
 /* Base Body */
@@ -21,25 +16,175 @@
     font-family: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace;
 }
 
-/* Hide Streamlit elements */
-header[data-testid="stHeader"] {
-    display: none;
-}
-
-footer {
-    display: none;
-}
-
-#MainMenu {
-    display: none;
-}
-
-.stDeployButton {
-    display: none;
-}
-
+/* Ocultar elementos basura de Streamlit */
+#MainMenu,
+footer,
+header,
+header[data-testid="stHeader"],
+.stDeployButton,
 .viewerBadge_container__1QSob {
     display: none !important;
+    visibility: hidden !important;
+}
+
+/* Estilo de Scrollbar tipo Terminal */
+::-webkit-scrollbar {
+    width: 5px;
+}
+
+::-webkit-scrollbar-track {
+    background: #000;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #00FF41;
+    border-radius: 10px;
+}
+
+/* System Scan Line Animation */
+.scan-line {
+    position: fixed;
+    top: -10px;
+    left: 0;
+    width: 100vw;
+    height: 3px;
+    background-color: var(--green-accent);
+    box-shadow: 0 0 15px var(--green-accent);
+    opacity: 0.7;
+    animation: scanline 2.5s ease-in-out 1 forwards;
+    z-index: 9999;
+}
+
+@keyframes scanline {
+    0% {
+        top: -10px;
+    }
+
+    100% {
+        top: 105vh;
+        display: none;
+    }
+}
+
+/* Typewriter Animation */
+.typewriter-title {
+    overflow: hidden;
+    white-space: nowrap;
+    border-right: .15em solid var(--green-accent);
+    animation: typing 1.5s steps(30, end), blink-caret .75s step-end infinite;
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: var(--green-accent);
+    display: inline-block;
+}
+
+@keyframes typing {
+    from {
+        width: 0
+    }
+
+    to {
+        width: 100%
+    }
+}
+
+@keyframes blink-caret {
+
+    from,
+    to {
+        border-color: transparent
+    }
+
+    50% {
+        border-color: var(--green-accent);
+    }
+}
+
+/* Fade-in & Slide-up */
+.fade-in-up {
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeInUp 0.8s ease-out forwards;
+}
+
+@keyframes fadeInUp {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Animación de Pulso Neón */
+@keyframes pulse-green {
+    0% {
+        box-shadow: 0 0 5px rgba(0, 255, 65, 0.2);
+        border-color: var(--glass-border);
+    }
+
+    50% {
+        box-shadow: 0 0 20px rgba(0, 255, 65, 0.6);
+        border-color: var(--green-accent);
+    }
+
+    100% {
+        box-shadow: 0 0 5px rgba(0, 255, 65, 0.2);
+        border-color: var(--glass-border);
+    }
+}
+
+@keyframes pulse-magenta {
+    0% {
+        box-shadow: 0 0 5px rgba(255, 0, 122, 0.2);
+        border-color: rgba(255, 0, 122, 0.2);
+    }
+
+    50% {
+        box-shadow: 0 0 20px rgba(255, 0, 122, 0.8);
+        border-color: var(--magenta-cyber);
+    }
+
+    100% {
+        box-shadow: 0 0 5px rgba(255, 0, 122, 0.2);
+        border-color: rgba(255, 0, 122, 0.2);
+    }
+}
+
+.pulse-neon,
+div[data-testid="stMetric"] {
+    border: 1px solid var(--green-accent) !important;
+    animation: pulse-green 4s infinite;
+    background: rgba(0, 255, 65, 0.05) !important;
+    border-radius: 0px !important;
+    padding: 20px;
+}
+
+.pulse-magenta {
+    border: 1px solid var(--magenta-cyber) !important;
+    animation: pulse-magenta 3s infinite;
+    background: rgba(255, 0, 122, 0.05) !important;
+    color: var(--magenta-cyber) !important;
+    border-radius: 0px !important;
+}
+
+/* Terminal Hover Effects */
+.terminal-card {
+    background: transparent;
+    border: 1px solid var(--glass-border);
+    border-radius: 0px !important;
+    padding: 20px;
+    margin-bottom: 20px;
+    transition: all 0.3s ease;
+}
+
+.terminal-card:hover {
+    border: 1px solid var(--green-accent);
+    box-shadow: 0 0 10px var(--green-accent);
+    background: rgba(0, 255, 65, 0.05);
+}
+
+.pulse-neon:hover {
+    box-shadow: 0 0 15px var(--green-accent);
+    background: rgba(0, 255, 65, 0.1) !important;
 }
 
 /* Typography styles */
@@ -66,22 +211,6 @@ div[data-testid="stMetricValue"]>div {
     font-weight: 700;
 }
 
-/* Cards / Separators */
-.terminal-card {
-    background: transparent;
-    border: 1px solid var(--glass-border);
-    padding: 20px;
-    margin-bottom: 20px;
-}
-
-hr,
-.stDivider>div {
-    border-top: 1px solid var(--glass-border) !important;
-    border-bottom: none !important;
-}
-
-/* 3. Refactorización de Widgets */
-
 /* Forms and Buttons */
 .stButton>button,
 .stFormSubmitButton>button {
@@ -98,7 +227,7 @@ hr,
 .stFormSubmitButton>button:hover {
     background: var(--green-accent) !important;
     color: #000000 !important;
-    box-shadow: 0 0 10px var(--green-accent) !important;
+    box-shadow: 0 0 15px var(--green-accent) !important;
 }
 
 /* Inputs & Selects */
@@ -111,12 +240,19 @@ select,
     color: var(--green-accent) !important;
     border: 1px solid var(--glass-border) !important;
     border-radius: 0px !important;
+    transition: all 0.2s;
 }
 
 input:focus,
 .stTextInput>div>div>input:focus {
     border-color: var(--green-accent) !important;
-    box-shadow: none !important;
+    box-shadow: 0 0 10px var(--green-accent) !important;
+    background: rgba(0, 255, 65, 0.05) !important;
+}
+
+/* Placeholder pseudo-class targeting */
+input::placeholder {
+    color: var(--text-muted) !important;
 }
 
 /* Checkboxes */
@@ -133,4 +269,10 @@ input:focus,
 
 .text-muted {
     color: var(--text-muted);
+}
+
+hr,
+.stDivider>div {
+    border-top: 1px solid var(--glass-border) !important;
+    border-bottom: none !important;
 }
