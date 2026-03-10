@@ -1,82 +1,219 @@
-/* SmartOps Life ERP Theme */
+/* SmartOpsIA Terminal Theme */
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap');
+
 :root {
-    --bg-color: #0D0D0D;
-    --cyan: #00F2FF;
-    --magenta: #FF007A;
-    --glass-bg: rgba(255, 255, 255, 0.05);
-    --glass-border: rgba(255, 255, 255, 0.1);
+    --bg-color: #080808;
+    /* Extremely dark grey */
+    --green-accent: #00FF41;
+    /* Terminal green */
+    --card-bg: #111111;
+    /* Slightly lighter dark grey */
+    --card-border: #333333;
+    --text-main: #FFFFFF;
+    --text-muted: #888888;
 }
 
 /* Base Body */
 .stApp {
     background-color: var(--bg-color);
-    color: white;
-    font-family: 'JetBrains Mono', 'Inter', monospace, sans-serif;
+    color: var(--text-main);
+    font-family: 'JetBrains Mono', monospace;
 }
 
-/* Glassmorphism Containers */
-div[data-testid="stMetric"],
-div.stCard,
+/* Hide Streamlit elements */
+header[data-testid="stHeader"] {
+    display: none;
+}
+
+footer {
+    display: none;
+}
+
+.stDeployButton {
+    display: none;
+}
+
+/* Top Status Bar */
+.status-bar {
+    display: flex;
+    justify-content: space-between;
+    color: var(--text-muted);
+    font-size: 0.8rem;
+    margin-bottom: 5px;
+    font-family: 'JetBrains Mono', monospace;
+    text-transform: uppercase;
+}
+
+.status-divider {
+    border-top: 1px solid var(--green-accent);
+    margin-bottom: 40px;
+    opacity: 0.3;
+}
+
+/* Titles */
+.main-title {
+    font-size: 3.5rem;
+    font-weight: 700;
+    margin-bottom: 10px;
+    letter-spacing: -1px;
+}
+
+.title-ia {
+    color: var(--green-accent);
+}
+
+.subtitle {
+    color: var(--green-accent);
+    font-size: 1.2rem;
+    margin-bottom: 60px;
+    font-weight: normal;
+}
+
+.cursor-blink {
+    animation: blink 1s step-end infinite;
+    display: inline-block;
+    width: 10px;
+    height: 1.2rem;
+    background-color: var(--green-accent);
+    vertical-align: middle;
+    margin-left: 5px;
+}
+
+@keyframes blink {
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0;
+    }
+}
+
+/* Cards */
+.terminal-card {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    padding: 25px;
+    min-height: 250px;
+    font-family: 'JetBrains Mono', monospace;
+    margin-bottom: 20px;
+}
+
+.terminal-card-title {
+    color: var(--text-main);
+    font-weight: bold;
+    font-size: 1.1rem;
+    margin-bottom: 15px;
+}
+
+.terminal-card-text {
+    color: var(--text-muted);
+    font-size: 0.95rem;
+    line-height: 1.6;
+}
+
+/* Container spacing for cards */
+div[data-testid="column"] {
+    padding: 0 10px;
+}
+
+/* Overriding Streamlit elements to fit theme */
+div[data-testid="stMetricValue"] {
+    color: var(--text-main);
+    font-family: 'JetBrains Mono', monospace;
+}
+
+div[data-testid="stMetricLabel"] {
+    color: var(--text-muted);
+    font-family: 'JetBrains Mono', monospace;
+}
+
+/* Forms inside columns */
 div[data-testid="stForm"] {
-    background: var(--glass-bg);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    border-radius: 12px;
-    border: 1px solid var(--glass-border);
-    padding: 20px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
-    transition: transform 0.2s, box-shadow 0.2s;
-}
-
-/* Neon Borders for specific elements */
-.neon-cyan {
-    border: 1px solid var(--cyan) !important;
-    box-shadow: 0 0 10px var(--cyan), 0 0 20px var(--cyan) inset !important;
-}
-
-.neon-magenta {
-    border: 1px solid var(--magenta) !important;
-    box-shadow: 0 0 10px var(--magenta), 0 0 20px var(--magenta) inset !important;
-}
-
-/* Headers */
-h1,
-h2,
-h3 {
-    color: var(--cyan);
-    text-shadow: 0 0 5px var(--cyan);
+    border: none;
+    background: transparent;
+    padding: 0;
+    box-shadow: none;
 }
 
 /* Buttons */
-.stButton>button {
-    background: transparent;
-    border: 2px solid var(--magenta);
-    color: white;
-    border-radius: 8px;
-    padding: 10px 24px;
-    font-weight: bold;
-    transition: all 0.3s ease;
-    text-shadow: 0 0 5px var(--magenta);
-    box-shadow: 0 0 10px var(--magenta) inset, 0 0 10px var(--magenta);
+.stButton>button,
+.stFormSubmitButton>button {
+    background: transparent !important;
+    border: 1px solid var(--card-border) !important;
+    color: var(--text-muted) !important;
+    border-radius: 0px !important;
+    font-family: 'JetBrains Mono', monospace !important;
+    text-transform: uppercase;
+    transition: all 0.2s;
+    width: 100%;
+    padding: 10px;
+    margin-top: 10px;
 }
 
-.stButton>button:hover {
-    background: var(--magenta);
-    color: white;
-    box-shadow: 0 0 20px var(--magenta);
+.stButton>button:hover,
+.stFormSubmitButton>button:hover {
+    border-color: var(--green-accent) !important;
+    color: var(--green-accent) !important;
+    box-shadow: none !important;
 }
 
-/* Progress Bars */
-.stProgress>div>div>div>div {
-    background-color: var(--magenta) !important;
+/* Inputs & Selects */
+input,
+select,
+.stTextInput>div>div>input,
+.stNumberInput>div>div>input,
+.stSelectbox>div>div {
+    background-color: var(--bg-color) !important;
+    color: var(--text-main) !important;
+    border: 1px solid var(--card-border) !important;
+    border-radius: 0px !important;
+    font-family: 'JetBrains Mono', monospace !important;
 }
 
-/* Metric labels */
-div[data-testid="stMetricLabel"] {
-    color: #aaaaaa;
+input:focus,
+.stTextInput>div>div>input:focus {
+    border-color: var(--green-accent) !important;
+    box-shadow: none !important;
 }
 
-div[data-testid="stMetricValue"] {
-    color: var(--cyan);
-    text-shadow: 0 0 5px var(--cyan);
+/* Checkboxes / Toggles */
+.stCheckbox>label>div[data-testid="stMarkdownContainer"]>p {
+    color: var(--text-muted);
+}
+
+.stCheckbox>label>span {
+    background-color: transparent !important;
+    border-color: var(--card-border) !important;
+    border-radius: 0px !important;
+}
+
+/* Text and Labels */
+p,
+label,
+.stMarkdown {
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--text-muted);
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--text-main);
+}
+
+/* Dividers */
+hr {
+    border-color: var(--card-border) !important;
+}
+
+/* Hide standard markdown inside cards if it breaks style */
+.stMarkdown p {
+    margin-bottom: 0px;
 }
