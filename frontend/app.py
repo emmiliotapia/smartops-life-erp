@@ -1,84 +1,8 @@
 import streamlit as st
 import requests
 import os
-import datetime
-
-# --- CONFIGURACIÓN BASE ---
-st.set_page_config(page_title="SmartOps VIVID", layout="wide", initial_sidebar_state="expanded")
 
 BACKEND_URL = os.getenv("BACKEND_URL", "http://localhost:8000")
-
-# --- 1. INYECCIÓN DE ESTILO MATRIX (CSS OBLIGATORIO) ---
-st.markdown("""
-<style>
-    @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap');
-
-    /* Ocultar basura de Streamlit */
-    #MainMenu, footer, header { visibility: hidden !important; display: none !important; }
-    .stDeployButton, .viewerBadge_container__1QSob { display: none !important; }
-    
-    /* Fondo Absoluto y Texto Verde Matrix */
-    .stApp {
-        background-color: #000000 !important;
-        color: #00FF41 !important;
-        font-family: 'JetBrains Mono', monospace !important;
-    }
-    
-    /* Tipografía Global Muted y Normal */
-    p, label, span, div, h1, h2, h3, h4, h5, h6, .stMarkdown p {
-        font-family: 'JetBrains Mono', monospace !important;
-        color: #00FF41 !important;
-    }
-
-    /* Muted Text para headers chicos o placeholders */
-    .muted-text { color: #555555 !important; }
-
-    /* Estilo de Botones: Bordes 1px, Esquinas rectas, Fondo Tranparente */
-    .stButton > button, .stFormSubmitButton > button {
-        background-color: transparent !important;
-        border: 1px solid #00FF41 !important;
-        border-radius: 0px !important;
-        color: #00FF41 !important;
-        font-family: 'JetBrains Mono', monospace !important;
-        box-shadow: none !important;
-        padding: 8px 16px !important;
-        transition: 0.2s all;
-    }
-    .stButton > button:hover, .stFormSubmitButton > button:hover {
-        background-color: #00FF41 !important;
-        color: #000000 !important;
-    }
-
-    /* Inputs y Selects */
-    input, select, .stTextInput > div > div > input, .stNumberInput > div > div > input, .stSelectbox > div > div {
-        background-color: #000000 !important;
-        color: #00FF41 !important;
-        border: 1px solid rgba(0, 255, 65, 0.4) !important;
-        border-radius: 0px !important;
-        font-family: 'JetBrains Mono', monospace !important;
-    }
-    input:focus { border-color: #00FF41 !important; box-shadow: 0 0 5px #00FF41 !important; }
-
-    /* Scrollbars Matrix */
-    ::-webkit-scrollbar { width: 8px; }
-    ::-webkit-scrollbar-track { background: #000000; }
-    ::-webkit-scrollbar-thumb { background: #00FF41; border-radius: 0px; }
-    
-    /* Efecto "Terminal Glow" para titulos */
-    .glow { text-shadow: 0 0 5px #00FF41; }
-
-    /* Contenedores (Cards) transparentes con borde sutil */
-    .matrix-card {
-        border: 1px solid rgba(0, 255, 65, 0.2);
-        padding: 20px;
-        margin-bottom: 20px;
-    }
-
-    /* Modos: CSS Variables dinámicas para el borde principal */
-    .mode-expansion { border-top: 2px solid #00FF41 !important; }
-    .mode-penalty { border-top: 2px solid #FF007A !important; }
-</style>
-""", unsafe_allow_html=True)
 
 # Fetch Data
 try:
@@ -87,94 +11,174 @@ try:
 except:
     data = {"daily_power": 0.0, "penalty_days": 0, "debt_bosses": [], "state": "MODO_GUERRA", "projections": []}
 
-daily_power = data.get("daily_power", 500.0) # Using default fallback if 0
+daily_power = data.get("daily_power", 0.0)
 penalty_days = data.get("penalty_days", 0)
-debts = data.get("debt_bosses", [])
 
-# 4. Lógica de "Modo Guerra" vs "Modo Expansión". 
-# Si hay sobregiro/penalidades usa clase magenta, de lo contrario verde.
-card_mode_class = "mode-penalty" if penalty_days > 0 or daily_power < 0 else "mode-expansion"
-metric_color = "#FF007A" if daily_power < 0 else "#00FF41"
+# Determine global mode colors
+primary_color = "#FF007A" if penalty_days > 0 or daily_power < 0 else "#00FF41"
+border_color = f"{primary_color}33" # with transparency
 
+# 1. FORZAR LAYOUT ANCHO Y TEMA OSCURO
+st.set_page_config(page_title="SMART-OPS OS", layout="wide", initial_sidebar_state="expanded")
 
-# --- 2. ARQUITECTURA DE NAVEGACIÓN (SIDEBAR) ---
-st.sidebar.markdown("<h3 class='glow'>> SYSTEM_NAV</h3>", unsafe_allow_html=True)
-pages = [
-    "[01] TERMINAL",
-    "[02] DASHBOARD",
-    "[03] CRM_OPS",
-    "[04] VAULTS",
-    "[05] BOSS_RAID"
-]
-selection = st.sidebar.radio("Go to:", pages, label_visibility="collapsed")
-
-
-# --- 3. IMPLEMENTACIÓN DEL HUD [01] TERMINAL ---
-if selection == "[01] TERMINAL":
-    # Header Táctico
-    st.markdown("""
-    <div style="display: flex; justify-content: space-between; border-bottom: 1px solid rgba(0, 255, 65, 0.2); margin-bottom: 20px; padding-bottom: 5px;">
-        <span class="muted-text">[ STATUS: ONLINE ]</span>
-        <span class="muted-text">[ LEVEL: 20K_GOAL ]</span>
-        <span class="muted-text">[ RUNWAY: CALC_PENDING ]</span>
-    </div>
+# 2. INYECCIÓN DE CSS PARA SIDEBAR Y HUD (ESTILO MATRIX)
+st.markdown(f"""
+    <style>
+    /* Fondo negro total */
+    [data-testid="stAppViewContainer"], [data-testid="stSidebar"] {{
+        background-color: #000000 !important;
+        border-right: 1px solid {border_color};
+    }}
+    /* Texto Verde Mono (o Magenta si hay penalización) */
+    * {{
+        color: {primary_color} !important;
+        font-family: 'JetBrains Mono', monospace !important;
+    }}
+    /* Input backgrounds */
+    input, select, .stTextInput > div > div > input, .stNumberInput > div > div > input, .stSelectbox > div > div {{
+        background-color: #000000 !important;
+        color: {primary_color} !important;
+        border: 1px solid {primary_color} !important;
+        border-radius: 0px !important;
+    }}
+    /* Contenedores de inputs */
+    [data-baseweb="select"] > div {{
+        background-color: #000000 !important;
+        border-radius: 0px !important;
+        border-color: {primary_color} !important;
+    }}
+    /* Estilo de los items del Menú Lateral */
+    .stRadio > div {{
+        gap: 10px;
+    }}
+    button[kind="secondary"] {{
+        border: 1px solid {primary_color} !important;
+        background: transparent !important;
+        border-radius: 0px !important;
+        transition: 0.2s all;
+    }}
+    button[kind="secondary"]:hover {{
+        background: {primary_color} !important;
+        color: #000000 !important;
+    }}
+    button[kind="primary"] {{
+        border: 1px solid {primary_color} !important;
+        background: transparent !important;
+        border-radius: 0px !important;
+    }}
+    /* Ocultar basurilla de Streamlit */
+    [data-testid="stHeader"], footer, .stDeployButton {{display: none !important;}}
+    </style>
     """, unsafe_allow_html=True)
 
-    col1, col2 = st.columns([1.2, 1])
+# 3. SIDEBAR DE NAVEGACIÓN (OBLIGATORIO)
+with st.sidebar:
+    st.markdown("### 🛸 SYSTEM_NAV")
+    st.markdown("---")
+    menu = st.radio(
+        "SELECT_MODULE:",
+        ["[01] TERMINAL", "[02] DASHBOARD", "[03] CRM_OPS", "[04] VAULTS", "[05] BOSS_RAID"],
+        index=0,
+        label_visibility="collapsed"
+    )
+    st.markdown("---")
+    status_label = "ONLINE" if penalty_days == 0 else "PENALTY_MODE"
+    st.markdown(f"`STATUS: {status_label}`\n\n`USER: EMMILIO_ARCH`\n\n`LOC: MXLI_BC`")
 
+# 4. LÓGICA DE MÓDULOS
+if menu == "[01] TERMINAL":
+    st.markdown("# > TERMINAL_CENTRAL")
+    col1, col2, col3 = st.columns(3)
+    
+    # Calculate mock values for runway and buff
+    next_week_buff = 0.0 # Could load from DB later
+    runway = "CALC_PENDING"
+    
     with col1:
-        # Métrica de Poder
-        st.markdown(f"<div class='matrix-card {card_mode_class}'>", unsafe_allow_html=True)
-        st.markdown("<h4 class='glow'>[ DAILY POWER ]</h4>", unsafe_allow_html=True)
-        st.markdown(f"<h1 style='color: {metric_color} !important; text-shadow: 0 0 10px {metric_color};'>$ {daily_power:.2f}</h1>", unsafe_allow_html=True)
-        
-        if card_mode_class == "mode-penalty":
-            st.markdown(f"<span style='color: #FF007A; font-weight: bold;'>[ PENALTY_MODE_ACTIVE: {penalty_days:.1f} DAYS ]</span>", unsafe_allow_html=True)
-        else:
-            st.markdown(f"<span class='muted-text'>[ EXPANSION_MODE ] No Debts Detected.</span>", unsafe_allow_html=True)
-        st.markdown("</div>", unsafe_allow_html=True)
-
-        # Input de Comando
-        st.markdown(f"<div class='matrix-card'>", unsafe_allow_html=True)
-        with st.form("command_input"):
-            st.markdown("<h4 class='glow'>[ QUICK_LOG ]</h4>", unsafe_allow_html=True)
-            cmd_text = st.text_input("> AGREGAR_MOVIMIENTO:", placeholder="Ej: 50 Comida Expense (En desarrollo el parser de cmd)")
-            
-            # Temporary dropdowns until Natural Language parsing is fully integrated
-            c1, c2 = st.columns(2)
-            with c1: tx_type = st.selectbox("TYPE", ["Expense", "Income", "Apartado", "Defense"])
-            with c2: amount = st.number_input("AMOUNT", min_value=0.01, step=10.0)
-            
-            submitted = st.form_submit_button("[ EXECUTE_TRANSACTION ]")
-            if submitted:
-                # Basic execution simulation
-                try:
-                    payload = {"amount": amount, "type": tx_type, "description": cmd_text, "category_id": None}
-                    res = requests.post(f"{BACKEND_URL}/transactions", json=payload)
-                    st.success("> TX_SENT")
-                except:
-                    st.error("> SYSTEM_ERROR")
-        st.markdown("</div>", unsafe_allow_html=True)
-
+        st.metric("DAILY_POWER", f"${daily_power:.2f}", "-PENALTY" if penalty_days > 0 else "")
     with col2:
-        # Proyección a 14 días (Tabla o lista)
-        st.markdown(f"<div class='matrix-card'>", unsafe_allow_html=True)
-        st.markdown("<h4 class='glow'>> PROJECTION[14_DAYS]</h4>", unsafe_allow_html=True)
-        st.markdown("<span class='muted-text'>Simulación de Daily Power si Gasto = $0</span><hr>", unsafe_allow_html=True)
-        
+        st.metric("NEXT_WEEK_BUFF", f"${next_week_buff:.2f}")
+    with col3:
+        st.metric("RUNWAY", runway)
+    
+    st.markdown("---")
+    
+    col_cmd, col_proj = st.columns([1, 1.5])
+    
+    with col_cmd:
+        st.markdown("### [ COMMAND_INPUT ]")
+        with st.form("transaction_form"):
+            st.markdown("> AGREGAR_MOVIMIENTO:")
+            tx_type = st.selectbox("TYPE", ["Expense", "Income", "Apartado", "Defense"])
+            amount = st.number_input("AMOUNT", min_value=0.01, step=10.0)
+            desc = st.text_input("DESC", placeholder="Concepto...")
+            
+            try:
+                buckets_res = requests.get(f"{BACKEND_URL}/buckets").json()
+                debts_res = data.get("debt_bosses", [])
+            except:
+                buckets_res = []
+                debts_res = []
+                
+            category_options = {"None": None}
+            if tx_type == "Apartado":
+                for b in buckets_res:
+                    category_options[f"VAULT: {b['name']}"] = b['id']
+            elif tx_type == "Defense":
+                for d in debts_res:
+                    category_options[f"TARGET: {d['name']}"] = d['id']
+                    
+            category = st.selectbox("TARGET_NODE", options=list(category_options.keys()))
+            
+            submitted = st.form_submit_button("> EXECUTE_TX")
+            if submitted:
+                cat_id = category_options[category]
+                payload = {
+                    "amount": amount,
+                    "type": tx_type,
+                    "description": desc,
+                    "category_id": cat_id
+                }
+                try:
+                    res = requests.post(f"{BACKEND_URL}/transactions", json=payload)
+                    if res.status_code == 200:
+                        st.success("> TX_ACCEPTED")
+                    else:
+                        st.error(f"> ERR: {res.json().get('detail', 'Unknown')}")
+                except Exception as e:
+                    st.error(f"> SYSERR: {e}")
+                    
+        if st.button("> EXEC RESET_MONDAY()"):
+            try:
+                res = requests.post(f"{BACKEND_URL}/reset_monday")
+                if res.status_code == 200:
+                    st.success("> CYCLE_RESET_OK")
+            except:
+                pass
+
+
+    with col_proj:
+        st.markdown("### [ FUTURE_SIGHT_PROJECTION ]")
         projections = data.get("projections", [])
         if not projections:
-            # Dummy data si el backend está caído/vacío
-            projections = [daily_power + (i * 12.5) for i in range(14)]
+            # Dummy data if no connection or no logic yet
+            projections = [daily_power + (i * 10) for i in range(14)]
             
-        for i in range(0, 14, 2):
-            if i+1 < len(projections):
-                d1 = f"D+{i}: ${projections[i]:.0f}"
-                d2 = f"D+{i+1}: ${projections[i+1]:.0f}"
-                st.markdown(f"<div style='display: flex; justify-content: space-between;'><span class='muted-text'>{d1}</span><span style='color: #00FF41;'>{d2}</span></div>", unsafe_allow_html=True)
-                
+        st.markdown("<div style='display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px;'>", unsafe_allow_html=True)
+        for i, val in enumerate(projections):
+            day_label = f"D+{i}" if i > 0 else "TODAY"
+            st.markdown(f"""
+            <div style='border: 1px solid {primary_color}; padding: 10px; text-align: center; background: #000000;'>
+                <div style='font-size: 0.8rem; opacity: 0.8;'>{day_label}</div>
+                <div style='font-weight: bold;'>${val:.0f}</div>
+            </div>
+            """, unsafe_allow_html=True)
         st.markdown("</div>", unsafe_allow_html=True)
 
+elif menu == "[03] CRM_OPS":
+    st.markdown("# > OPERATIONS_PIPELINE")
+    st.write("> UNDER_CONSTRUCTION")
 else:
-    st.markdown(f"<h3 class='glow'>[ {selection.split('] ')[1]} MODULE_OFFLINE ]</h3>", unsafe_allow_html=True)
-    st.markdown("<span class='muted-text'>> AWAITING_IMPLEMENTATION...</span>", unsafe_allow_html=True)
+    section_name = menu.split('] ')[1] if '] ' in menu else menu
+    st.markdown(f"# > {section_name}_MODULE")
+    st.write("> UNDER_CONSTRUCTION. AWAITING DATA STREAM.")
