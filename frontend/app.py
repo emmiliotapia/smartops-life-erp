@@ -140,12 +140,10 @@ if selection == "[01] TERMINAL":
 elif selection == "[02] DASHBOARD":
     st.markdown("### > UNDER_CONSTRUCTION. BRINGING LEGACY COMPONENTS HERE...")
 
-# Layout 3 columns Setup
-col1, col2, col3 = st.columns([1,1.5,1])
-
-    current_time = datetime.datetime.now().strftime("%H:%M:%S UTC")
-    
+    # Layout 3 columns Setup
     col1, col2, col3 = st.columns([1,1.5,1])
+    
+    current_time = datetime.datetime.now().strftime("%H:%M:%S UTC")
     
     with col1:
         st.markdown(f"""
@@ -234,4 +232,3 @@ col1, col2, col3 = st.columns([1,1.5,1])
 
 else:
     st.markdown(f"### > MODULE {selection} UNAVAILABLE.")
-
